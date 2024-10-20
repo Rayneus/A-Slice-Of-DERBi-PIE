@@ -5,6 +5,7 @@ from transformers import GPT2Tokenizer
 def load_process():
     #load dataset
     dataset = load_dataset("wikitext", "wikitext-103-v1")
+    n = dataset["test"].shape[0]
 
     # Load the tokenizer
     tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
@@ -19,6 +20,8 @@ def load_process():
     
 
     tokenizedDatasets = dataset.map(tokenize, batched=True, remove_columns=["text"])
+    for i in range(10):
+        print(tokenizedDatasets["test"][i]["input_ids"])
 
     return tokenizedDatasets
 

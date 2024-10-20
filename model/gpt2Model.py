@@ -1,8 +1,16 @@
+import torch
 from transformers import GPT2LMHeadModel, Trainer, TrainingArguments
 
 def getModel():
+    if torch.cuda.is_available():
+        print("cuda is available")
+        device = torch.device("cuda")
+    else:
+        print("cuda is not available")
+        device = torch.device("cpu")
+
     #load model
-    model = GPT2LMHeadModel.from_pretrained("gpt2")
+    model = GPT2LMHeadModel.from_pretrained("gpt2").to(device)
 
     return model
 
