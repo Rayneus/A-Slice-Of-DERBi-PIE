@@ -25,3 +25,24 @@ def load_process():
 
     return tokenizedDatasets
 
+def count(dataset):
+    # Flatten the list of input_ids
+    all_input_ids = [word for example in dataset for word in example['input_ids']]
+    
+    # Get unique words
+    unique_words = set(all_input_ids)
+    
+    # Count the occurrences of each unique word
+    word_count = {word: 0 for word in unique_words}
+    for word in all_input_ids:
+        word_count[word] += 1
+    
+    return word_count
+
+tokenized_datasets = load_process()
+word_count = count(tokenized_datasets["test"])
+print(word_count)
+
+
+
+
