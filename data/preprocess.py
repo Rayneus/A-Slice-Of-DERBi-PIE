@@ -39,10 +39,37 @@ def count(dataset):
     
     return word_count
 
+# Corpus reduction function to remove X% of occurrences
+def reduce_corpus(dataset, word_count, reduction_percentage=0.25):
+    target_reduction = {word: int(count * reduction_percentage) for word, count in word_count.items()}
+    
+    # Iterate through each example in the dataset
+    reduced_dataset = []
+    for example in dataset:
+        new_input_ids = []
+        for word in example['input_ids']:
+            # Check if we still need to remove more occurrences of this word
+            if target_reduction[word] > 0:
+                # With probability reduction_percentage, skip adding the word
+                if random.random() < reduction_percentage:
+                    target_reduction[word] -= 1
+                    continue
+            new_input_ids.append(word)
+        
+        # Replace the input_ids in the example with the reduced version
+        reduced_example = example.copy()
+        reduced_example['input_ids'] = new_input_ids
+        reduced_dataset.append(reduced_example)
+    
+    return reduced_dataset
+
 tokenized_datasets = load_process()
 word_count = count(tokenized_datasets["test"])
 print(word_count)
 
+# Apply reduction to test set
+reduced_test_set = reduce_corpus(tokenized_datasets["test"], word_count)
+print(reduced_test_set[:10])
 
 
 
