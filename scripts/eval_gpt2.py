@@ -9,15 +9,14 @@ from model.gpt2Model import getModel, getTrainer
 
 #load and preprocess data
 tokenizedDatasets = load_process()
-print(tokenizedDatasets)
 
 #load model
 model = getModel()
 trainer= getTrainer(model, tokenizedDatasets)
 
 #evaluate model
-# evalResults = trainer.evaluate()
+evalResults = trainer.evaluate()
 
 #print results
-# print(evalResults)
-# print(f"Perplexity: {evalResults['eval_loss']}")
+print(evalResults)
+print(f"Perplexity: {evalResults['eval_loss']}")

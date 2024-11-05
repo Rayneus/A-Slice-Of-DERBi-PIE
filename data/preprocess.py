@@ -1,11 +1,13 @@
 from datasets import load_dataset
 from transformers import GPT2Tokenizer
+import numpy as np
 
 #dataset tokenization
 def load_process():
     #load dataset
-    dataset = load_dataset("wikitext", "wikitext-103-v1")
-    n = dataset["test"].shape[0]
+    # dataset = load_dataset("wikitext", "wikitext-103-v1")
+    dataset = load_dataset("imdb")
+    # dataset = dataset['train'].shuffle(seed=42).select([i for i in range(100)])
 
     # Load the tokenizer
     tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
@@ -20,8 +22,14 @@ def load_process():
     
 
     tokenizedDatasets = dataset.map(tokenize, batched=True, remove_columns=["text"])
-    for i in range(10):
-        print(tokenizedDatasets["test"][i]["input_ids"])
+    
+    word_count = count(tokenizedDatasets["train"])
+    # print(word_count)
+
+    # Apply reduction to test set
+    reduced_test_set = reduce_corpus(tokenizedDatasets["train"], word_count)
+    tokenizedDatasets["train"] = reduced_test_set
+    print(tokenizedDatasets.keys())
 
     return tokenizedDatasets
 
@@ -51,7 +59,7 @@ def reduce_corpus(dataset, word_count, reduction_percentage=0.25):
             # Check if we still need to remove more occurrences of this word
             if target_reduction[word] > 0:
                 # With probability reduction_percentage, skip adding the word
-                if random.random() < reduction_percentage:
+                if np.random.random() < reduction_percentage:
                     target_reduction[word] -= 1
                     continue
             new_input_ids.append(word)
@@ -63,13 +71,14 @@ def reduce_corpus(dataset, word_count, reduction_percentage=0.25):
     
     return reduced_dataset
 
-tokenized_datasets = load_process()
-word_count = count(tokenized_datasets["test"])
-print(word_count)
+# tokenized_datasets = load_process()
+# word_count = count(tokenized_datasets)
+# print(word_count)
 
-# Apply reduction to test set
-reduced_test_set = reduce_corpus(tokenized_datasets["test"], word_count)
-print(reduced_test_set[:10])
+# # Apply reduction to test set
+# reduced_test_set = reduce_corpus(tokenized_datasets, word_count)
+# word_count = count(reduced_test_set)
+# print(word_count)
 
 
 

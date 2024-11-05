@@ -32,7 +32,8 @@ def getTrainer(model, tokenizedDatasets):
         model=model,
         args=trainingArgs,
         train_dataset=tokenizedDatasets["train"],
-        eval_dataset=tokenizedDatasets["validation"]
+        # eval_dataset=tokenizedDatasets["validation"]
+        eval_dataset=tokenizedDatasets["test"]
     )
 
     return trainer
